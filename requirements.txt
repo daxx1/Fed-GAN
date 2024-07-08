@@ -1,0 +1,13 @@
+torch~=1.4.0
+numpy~=1.18.4
+tensorflow-gpu==1.14.0
+scipy~=1.4.1
+six~=1.12.0
+torchvision~=0.5.0
+Keras~=2.3.1
+scikit-learn~=0.21.3
+Pillow~=7.0.0
+requests~=2.22.0
+tqdm~=4.46.0
+joblib~=0.13.2
+python main.py --checkpoint_dir mnist_z_dim_50_topk_150_teacher_4000_sigma_1500_thresh_0.7_pt_30_d_step_2_stochastic_1e-5/ --topk 150 --signsgd --norandom_proj --shuffle  --teachers_batch 80 --batch_teachers 50 --dataset mnist --train --max_eps 15 --train --thresh 0.7 --sigma 1500 --nopretrain --z_dim 50 --nosave_epoch --epoch 300 --save_vote --d_step 2 --pretrain_teacher 10 --stochastic --max_grad 1e-5

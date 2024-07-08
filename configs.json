@@ -1,0 +1,1 @@
+{"sigma": 2100.0, "sigma_thresh": 4500.0, "pca": false, "pca_sigma": 1.0, "step_size": 0.0001, "batch_teachers": 50, "g_step": 1, "pca_dim": 10}
