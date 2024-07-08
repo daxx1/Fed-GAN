@@ -1,53 +1,3 @@
-# DataLens
-
-This is the official code base for our ACM CCS 2021 paper:
-
-["DataLens: Scalable Privacy Preserving Training via Gradient Compression and Aggregation".](https://arxiv.org/abs/2103.11109)
-
-Boxin Wang*, Fan Wu*, Yunhui Long*, Luka Rimanic, Ce Zhang, Bo Li
-
-## Citation
-```
-@article{wang2021datalens,
-  title={DataLens: Scalable Privacy Preserving Training via Gradient Compression and Aggregation},
-  author={Wang, Boxin and Wu, Fan and Long, Yunhui and Rimanic, Luka and Zhang, Ce and Li, Bo},
-  journal={ACM Conference on Computer and Communications Security (CCS)},
-  year={2021}
-}
-```
-
-## Usage
-
-### Prepare your environment
-
-The project is tested on Python 3.6, but a higher version of Python should also work. Download required packages
-
-```shell script
-pip install -r requirements.txt
-```
-
-### Prepare your data
-Please store the training data in `$data_dir`. By default, `$data_dir` is set to `../../data`.
-
-We provide a script to download the MNIST and Fashion Mnist datasets. 
-
-```shell script
-python download.py [dataset_name]
-```
-
-For MNIST, you can run 
-
-```shell script
-python download.py mnist
-```
-
-For Fashion-MNIST, you can run 
-
-```shell script
-python download.py fashion_mnist
-```
-
-For CelebA and Places365 datasets, please refer to their official websites for downloading. 
 
 ### Training 
 
@@ -55,90 +5,26 @@ For CelebA and Places365 datasets, please refer to their official websites for d
 python main.py --checkpoint_dir [checkpoint_dir] --dataset [dataset_name] --train --stochastic --signsgd --topk [topk] 
 ```
 
-For example, to train the Datalens on Fashion-MNIST given eps=1 and delta=1e-5
-```shell script
-python main.py --checkpoint_dir fmnist_z_dim_50_topk_200_teacher_4000_sigma_5000_thresh_0.7_pt_30_d_step_2_stochastic_1e-5/ \
---topk 200 --signsgd --norandom_proj --shuffle  --teachers_batch 80 --batch_teachers 50 \
---dataset fashion_mnist --train --max_eps 1 --train --thresh 0.7 --sigma 5000 --nopretrain \
---z_dim 50 --nosave_epoch --epoch 300 --save_vote --d_step 2 --pretrain_teacher 10 --stochastic --max_grad 1e-5
-```
 
 By default, after it reaches the max epsilon, it will generate 10 batches of 10,000 DP samples as `eps-1.00.data-{i}.pkl` (i=0,...9) in `checkpoint_dir`.
 
-#### More example commands (eps=1):
+#### More example commands (eps=3,fog,nodes=3):
+![image](https://github.com/daxx1/fed-gan/assets/92024670/3fde0263-87cf-4929-a429-023b3c71dcb1)
+
 MNIST
 ```shell script
-python main.py --checkpoint_dir [checkpoint-dir] \
---topk 200 --signsgd --norandom_proj --shuffle  --teachers_batch 80 --batch_teachers 50 \
---dataset mnist --train --max_eps 1 --train --thresh 0.7 --sigma 5000 --nopretrain \
---z_dim 50 --save_epoch --epoch 300 --save_vote --d_step 2 --pretrain_teacher 10 --stochastic --max_grad 1e-5
+python main.py --checkpoint_dir mnist_z_dim_50_topk_200_teacher_5000_sigma_2100_thresh_0.6_pt_30_d_step_2_stochastic_1e-5/ --topk 200 --signsgd --norandom_proj --shuffle  --teachers_batch 100 --batch_teachers 50 --dataset mnist --train --max_eps 3 --train --thresh 0.6 --sigma 2100 --nopretrain --z_dim 50 --nosave_epoch --epoch 300 --save_vote --d_step 2 --pretrain_teacher 10 --stochastic --max_grad 1e-5
 ```
+![image](https://github.com/daxx1/fed-gan/assets/92024670/cb5b3da4-5f88-40ca-aa1d-94d35dfef7ba)
 
 Fashion-MNIST
 ```shell script
-python main.py --checkpoint_dir [checkpoint-dir] \
---topk 200 --signsgd --norandom_proj --shuffle  --teachers_batch 80 --batch_teachers 50 \
---dataset fashion_mnist --train --max_eps 1 --train --thresh 0.9 --sigma 5000 --nopretrain \
---z_dim 50 --nosave_epoch --epoch 300 --save_vote --d_step 2 --pretrain_teacher 10 --stochastic --max_grad 1e-5
+python main.py --checkpoint_dir fashionmnist_z_dim_50_topk_200_teacher_5000_sigma_2900_thresh_0.8_pt_30_d_step_2_stochastic_1e-5/ --topk 200 --signsgd --norandom_proj --shuffle  --teachers_batch 100 --batch_teachers 50 --dataset fashion_mnist --train --max_eps 3 --train --thresh 0.8 --sigma 2900 --nopretrain --z_dim 50 --nosave_epoch --epoch 300 --save_vote --d_step 2 --pretrain_teacher 10 --stochastic --max_grad 1e-5
 ```
 
 
-CelebA
-```shell script
-python main.py --checkpoint_dir [checkpoint-dir] \
---topk 700 --signsgd --norandom_proj --shuffle  --teachers_batch 100 --batch_teachers 60 \
---dataset celebA-gender-train --train --max_eps 1 --train --thresh 0.85 --sigma 9000 --nopretrain \
---z_dim 100 --nosave_epoch --epoch 300 --save_vote --d_step 2 --pretrain_teacher 30 --stochastic --max_grad 1e-5
-```
 
-Hair
-```shell script
-python main.py --checkpoint_dir [checkpoint-dir]\
---topk 700 --signsgd --norandom_proj --shuffle  --teachers_batch 100 --batch_teachers 80 \
---dataset celebA-hair-trn --train --max_eps 1 --train --thresh 0.9 --sigma 9000 --nopretrain \
---z_dim 100 --save_epoch --epoch 300 --save_vote --d_step 2 --pretrain_teacher 30 --stochastic --max_grad 1e-5
-```
 
-#### More example commands (eps=10):
-
-MNIST:
-```shell script
-python main.py --checkpoint_dir [checkpoint-dir]/ \
---topk 300 --signsgd --norandom_proj --shuffle  --teachers_batch 80 --batch_teachers 50 \
---dataset mnist --train --max_eps 10 --train --thresh 0.2 --sigma 800 --nopretrain \
- --z_dim 50 --nosave_epoch --epoch 300 --save_vote --pretrain_teacher 10 --d_step 2 --stochastic --max_grad 1e-5
-```
-
-Fashion-MNIST
-```shell script
-python main.py --checkpoint_dir [checkpoint-dir] / \
---topk 350 --signsgd --norandom_proj --shuffle  --teachers_batch 80 --batch_teachers 50 \
---dataset fashion_mnist --train --max_eps 10 --train --thresh 0.27 --sigma 1000 --nopretrain \
- --z_dim 64 --nosave_epoch --epoch 300 --save_vote --pretrain_teacher 10 --d_step 2 --stochastic --max_grad 1e-5
-```
-
-```shell script
-python main.py --checkpoint_dir [checkpoint-dir] / \
---topk 350 --signsgd --norandom_proj --shuffle  --teachers_batch 80 --batch_teachers 50 \
---dataset fashion_mnist --train --max_eps 10 --train --thresh 0.27 --sigma 1000 --nopretrain \
- --z_dim 64 --nosave_epoch --epoch 300 --save_vote --pretrain_teacher 10 --d_step 2
-```
-
-CelebA-Gender
-```shell script
-python main.py --checkpoint_dir [checkpoint-dir] / \
---topk 500 --signsgd --norandom_proj --shuffle  --teachers_batch 100 --batch_teachers 60 \
---dataset celebA-gender-train --train --max_eps 10 --train --thresh 0.12 --sigma 700 --nopretrain \
- --z_dim 100 --nosave_epoch --epoch 300 --save_vote --pretrain_teacher 30 --d_step 2 --stochastic
-```
-
-CelebA-Hair
-```shell script
-python main.py --checkpoint_dir [checkpoint-dir] / \
---topk 500 --signsgd --norandom_proj --shuffle  --teachers_batch 80 --batch_teachers 50 \
---dataset celebA-hair-trn --train --max_eps 10 --train --thresh 0.25 --sigma 700 --nopretrain \
- --z_dim 100 --nosave_epoch --epoch 300 --save_vote --pretrain_teacher 30 --d_step 2 --stochastic
-```
 
 ### Training Args
 
